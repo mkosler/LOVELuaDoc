@@ -24,5 +24,11 @@
 -- @param #string filename The filename of the image file.
 -- @return imageData The new ImageData object.
 
+---
+-- Create a new ImageData object.
+-- @function [parent = #image] newImageData
+-- @param data The encoded data to decode into image data.
+-- @return imageData The new ImageData object.
+
 
 return nil
