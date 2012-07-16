@@ -5,13 +5,6 @@
 --
 
 ---
--- Encodes ImageData.
--- @function [parent = #image] newEncodedImageData
--- @param imageData The raw ImageData to encode.
--- @param format The format to encode the image in.
--- @return data The encoded image data.
-
----
 -- Create a new ImageData object.
 -- @function [parent = #image] newImageData
 -- @param #number width The width of the ImageData.

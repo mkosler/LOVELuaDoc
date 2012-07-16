@@ -1,0 +1,327 @@
+---
+-- This module can simulate 2D rigid body physics in a realistic manner. 
+-- 
+-- This module is based on Box2D, and this API corresponds to the Box2D API as closely as possible.
+--
+-- @module physics
+--
+
+---
+-- Returns the two closest points between two fixtures and their distance.
+-- @function [parent = #physics] getDistance
+-- @param fixture1 The first fixture.
+-- @param fixture2 The second fixture.
+-- @return #number distance 
+-- @return #number x1 The distance of the two points.
+-- @return #number y1 The x-coordinate of the first point.
+-- @return #number x2 The x-coordinate of the second point.
+-- @return #number y2 The y-coordinate of the second point.
+
+---
+-- Returns the meter scale factor.
+--
+-- All coordinates in the physics module are divided by this number, creating a convenient way to draw the objects directly to the screen without the need for graphics transformations.
+--
+-- It is recommended to create shapes no larger than 10 times the scale. 
+-- This is important because Box2D is tuned to work well with shape sizes from 0.1 to 10 meters.
+-- @function [parent = #physics] getMeter
+-- @return #number The scale factor as an integer.
+
+---
+-- Creates a new body.
+--
+-- There are three types of bodies. Static bodies do not move, have a infinite mass, and can be used for level boundaries.
+-- Dynamic bodies are the main actors in the simulation, they collide with everything.
+-- Kinematic bodies do not react to forces and only collide with dynamic bodies.
+--
+-- The mass of the body gets calculated when a Fixture is attached or removed, but can be changed at any time with Body:setMass or Body:resetMassData.
+-- @function [parent = #physics] newBody
+-- @param world The world to create the body in.
+-- @param #number x (Optional = 0) The x position of the body.
+-- @param #number y (Optional = 0) The y position of the body.
+-- @param type (Optional = "static") The type of the body.
+-- @return body A new body.
+
+---
+-- Creates a new ChainShape.
+-- @function [parent = #physics] newChainShape
+-- @param #boolean loop If the chain should loop back to the first point.
+-- @param #number x1 The x position of the first point.
+-- @param #number y1 The y position of the first point.
+-- @param #number x2 The x position of the second point.
+-- @param #number y2 The y position of the second point.
+-- @param #number ... The x/y-positions of additional points.
+-- @return shape The new shape.
+
+---
+-- Creates a circle shape.
+-- @function [parent = #physics] newCircleShape
+-- @param #number radius The radius of the circle.
+-- @return shape The new shape.
+
+---
+-- Creates a circle shape.
+-- @function [parent = #physics] newCircleShape
+-- @param #number radius The radius of the circle.
+-- @param #number x The x of the circle.
+-- @param #number y The y of the circle.
+-- @return shape The new shape.
+
+---
+-- Creates a distance joint between two bodies.
+--
+-- This joint constrains the distance between two points on two bodies to be constant.
+-- These two points are specified in world coordinates and the two bodies are assumed to be in place when this joint is created.
+-- The first anchor point is connected to the first body and the second to the second body, and the points define the length of the distance joint.
+-- @function [parent = #physics] newDistanceJoint
+-- @param  body1 The first body to attach the joint.
+-- @param  body2 The second body to attach the joint.
+-- @param #number x1 The x position of the first anchor point.
+-- @param #number y1 The y position of the first anchor point.
+-- @param #number x2 The x position of the second anchor point.
+-- @param #number y2 The y position of the second anchor point.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new distance joint.
+
+---
+-- Creates a new EdgeShape.
+-- @function [parent = #physics] newEdgeShape
+-- @param #number x1 The x position of the first point.
+-- @param #number y1 The y position of the first point.
+-- @param #number x2 The x position of the second point.
+-- @param #number y2 The y position of the second point.
+-- @return shape The new shape.
+
+---
+-- Creates and attaches a Fixture to a body.
+-- @function [parent = #physics] newFixture
+-- @param body The body which gets the fixture attached.
+-- @param shape The shape of the fixture.
+-- @param #number density (Optional = 1) The density of the fixture.
+-- @return fixture The new fixture.
+
+---
+-- Create a friction joint between two bodies. A FrictionJoint applies friction to a body.
+-- @function [parent = #physics] newFrictionJoint
+-- @param  body1 The first body to attach to the joint.
+-- @param  body2 The second body to attach to the joint.
+-- @param #number x The x position of the anchor point.
+-- @param #number y The y position of the anchor point.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new FrictionJoint.
+
+---
+-- Create a friction joint between two bodies. A FrictionJoint applies friction to a body.
+-- @function [parent = #physics] newFrictionJoint
+-- @param  body1 The first body to attach to the joint.
+-- @param  body2 The second body to attach to the joint.
+-- @param #number x1 The x position of the first anchor point.
+-- @param #number y1 The y position of the first anchor point.
+-- @param #number x2 The x position of the second anchor point.
+-- @param #number y2 The y position of the second anchor point.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new FrictionJoint.
+
+---
+-- Create a gear joint connecting two joints.
+-- The gear joint connects two joints that must be either prismatic or revolute joints. Using this joint requires that the joints it uses connect their respective bodies to the ground and have the ground as the first body. When destroying the bodies and joints you must make sure you destroy the gear joint before the other joints.
+--
+--The gear joint has a ratio the determines how the angular or distance values of the connected joints relate to each other. The formula coordinate1 + ratio * coordinate2 always has a constant value that is set when the gear joint is created.
+-- @function [parent = #physics] newGearJoint
+-- @param joint1 The first joint to connect with a gear joint.
+-- @param joint2 The second joint to connect with a gear joint.
+-- @param #number ratio (Optional = 1) The gear ratio.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new gear joint.
+
+---
+-- Create a joint between a body and the mouse.
+--
+--This joint actually connects the body to a fixed point in the world. To make it follow the mouse, the fixed point must be updated every timestep (example below).
+--
+--The advantage of using a MouseJoint instead of just changing a body position directly is that collisions and reactions to other joints are handled by the physics engine.
+-- @function [parent = #physics] newMouseJoint
+-- @param  body The body to attach to the mouse.
+-- @param #number x The x position of the connecting point.
+-- @param #number y The y position of the connecting point.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new mouse joint.
+
+---
+-- Creates a new PolygonShape.
+--
+--This shape can have 8 vertices at most, and must form a convex shape.
+-- @function [parent = #physics] newPolygonShape
+-- @param #number x1 The x position of the first point.
+-- @param #number y1 The y position of the first point.
+-- @param #number x2 The x position of the second point.
+-- @param #number y2 The y position of the second point.
+-- @param #number x3 The x position of the third point.
+-- @param #number y3 The y position of the third point.
+-- @param #number ... Additional x/y-positions of points.
+-- @return shape The new PolygonShape.
+
+---
+-- Creates a prismatic joint between two bodies.
+--
+--A prismatic joint constrains two bodies to move relatively to each other on a specified axis. It does not allow for relative rotation. Its definition and operation are similar to a revolute joint, but with translation and force substituted for angle and torque.
+-- @function [parent = #physics] newPrismaticJoint
+-- @param  body1 The first body to connect with a prismatic joint.
+-- @param  body2 The second body to connect with a prismatic joint.
+-- @param #number x The x position of the anchor point.
+-- @param #number y The y position of the anchor point.
+-- @param #number ax The x position of the axis vector.
+-- @param #number ay The y position of the axis vector.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new prismatic joint.
+
+---
+-- Creates a prismatic joint between two bodies.
+--
+--A prismatic joint constrains two bodies to move relatively to each other on a specified axis. It does not allow for relative rotation. Its definition and operation are similar to a revolute joint, but with translation and force substituted for angle and torque.
+-- @function [parent = #physics] newPrismaticJoint
+-- @param  body1 The first body to connect with a prismatic joint.
+-- @param  body2 The second body to connect with a prismatic joint.
+-- @param #number x1 The x position of the first anchor point.
+-- @param #number y1 The y position of the first anchor point.
+-- @param #number x2 The x position of the second anchor point.
+-- @param #number y2 The y position of the second anchor point.
+-- @param #number ax The x position of the axis vector.
+-- @param #number ay The y position of the axis vector.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new prismatic joint.
+
+---
+-- Creates a pulley joint to join two bodies to each other and the ground.
+--
+--The pulley joint simulates a pulley with an optional block and tackle. If the ratio parameter has a value different from one, then the simulated rope extends faster on one side than the other. In a pulley joint the total length of the simulated rope is the constant length1 + ratio * length2, which is set when the pulley joint is created.
+--
+--Pulley joints can behave unpredictably if one side is fully extended. It is recommended that the method setMaxLengths  be used to constrain the maximum lengths each side can attain.
+-- @function [parent = #physics] newPulleyJoint
+-- @param  body1 The first body to connect with a pulley joint.
+-- @param  body2 The second body to connect with a pulley joint.
+-- @param #number gx1 The x position of the first body's ground anchor.
+-- @param #number gy1 The y position of the first body's ground anchor.
+-- @param #number gx2 The x position of the second body's ground anchor.
+-- @param #number gy2 The y position of the second body's ground anchor.
+-- @param #number x1 The x position of the pulley joint anchor in the first body.
+-- @param #number y1 The y position of the pulley joint anchor in the first body.
+-- @param #number x2 The x position of the pulley joint anchor in the second body.
+-- @param #number y2 The y position of the pulley joint anchor in the second body.
+-- @param #number ratio (Optional = 1) The joint ratio..
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new pulley joint.
+
+---
+-- Shorthand for creating rectanglar PolygonShapes.
+-- @function [parent = #physics] newRectangleShape
+-- @param #boolean loop If the chain should loop back to the first point.
+-- @param #number width The width of the rectangle.
+-- @param #number height The height of the rectangle.
+-- @return shape The new PolygonShape.
+
+---
+-- Shorthand for creating rectanglar PolygonShapes.
+-- @function [parent = #physics] newRectangleShape
+-- @param #boolean loop If the chain should loop back to the first point.
+-- @param #number x The offset along the x-axis.
+-- @param #number y The offset along the y-axis.
+-- @param #number width The width of the rectangle.
+-- @param #number height The height of the rectangle.
+-- @param #number angle (Optional = 1)
+-- @return shape The new PolygonShape.
+
+---
+-- Creates a pivot joint between two bodies.
+--
+-- This joint connects two bodies to a point around which they can pivot.
+-- @function [parent = #physics] newRevoluteJoint
+-- @param  body1 The first body.
+-- @param  body2 The second body.
+-- @param #number x The x position of the connecting point.
+-- @param #number y The y position of the connecting point.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new revolute joint.
+
+---
+-- Creates a joint between two bodies. Its only function is enforcing a max distance between these bodies.
+--
+-- NOTE: There is a bug in version 0.8.0 where the cooridnates of the anchors are divided by the number from love.physics.getMeter. As a workaround, multiply your anchor coordinates with that number and it should work like expected.
+-- @function [parent = #physics] newRopeJoint
+-- @param  body1 The first body to attach to the joint.
+-- @param  body2 The second body to attach to the joint.
+-- @param #number x1 The x position of the first anchor point.
+-- @param #number y1 The y position of the first anchor point.
+-- @param #number x2 The x position of the second anchor point.
+-- @param #number y2 The y position of the second anchor point.
+-- @param #number maxLength The maximum distance for the bodies.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new RopeJoint.
+
+---
+-- Creates a constraint joint between two bodies. A WeldJoint essentially glues two bodies together. The constraint is a bit soft, however, due to Box2D's iterative solver.
+-- @function [parent = #physics] newWeldJoint
+-- @param  body1 The first body to attach to the joint.
+-- @param  body2 The second body to attach to the joint.
+-- @param #number x The x position of the anchor point.
+-- @param #number y The y position of the anchor point.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new WeldJoint.
+
+---
+-- Creates a constraint joint between two bodies. A WeldJoint essentially glues two bodies together. The constraint is a bit soft, however, due to Box2D's iterative solver.
+-- @function [parent = #physics] newWeldJoint
+-- @param  body1 The first body to attach to the joint.
+-- @param  body2 The second body to attach to the joint.
+-- @param #number x1 The x position of the first anchor point.
+-- @param #number y1 The y position of the first anchor point.
+-- @param #number x2 The x position of the second anchor point.
+-- @param #number y2 The y position of the second anchor point.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new WeldJoint.
+
+---
+-- Creates a wheel joint.
+-- @function [parent = #physics] newWheelJoint
+-- @param  body1 The first body.
+-- @param  body2 The second body.
+-- @param #number x The x position of the anchor point.
+-- @param #number y The y position of the anchor point.
+-- @param #number ax The x position of the axis unit vector.
+-- @param #number ay The y position of the axis unit vector.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new WheelJoint.
+
+---
+-- Creates a wheel joint.
+-- @function [parent = #physics] newWheelJoint
+-- @param  body1 The first body.
+-- @param  body2 The second body.
+-- @param #number x1 The x position of the first anchor point.
+-- @param #number y1 The y position of the first anchor point.
+-- @param #number x2 The x position of the second anchor point.
+-- @param #number y2 The y position of the second anchor point.
+-- @param #number ax The x position of the axis unit vector.
+-- @param #number ay The y position of the axis unit vector.
+-- @param #boolean collideConnected (Optional = false) Specifies whether the two bodies should collide with each other.
+-- @return joint The new WheelJoint.
+
+---
+-- Creates a new World.
+-- @function [parent = #physics] newWorld
+-- @param #number xg (Optional = 0) The x component of gravity.
+-- @param #number yg (Optional = 0) The y component of gravity.
+-- @param #boolean sleep (Optional = true) Whether the bodies in this world are allowed to sleep.
+-- @return world A brave new World.
+
+---
+-- Sets the meter scale factor.
+--
+--All coordinates in the physics module are divided by this number, creating a convenient way to draw the objects directly to the screen without the need for graphics transformations.
+--
+--It is recommended to create shapes no larger than 10 times the scale. This is important because Box2D is tuned to work well with shape sizes from 0.1 to 10 meters.
+-- @function [parent = #physics] setMeter
+-- @param #number scale The scale factor as an integer.
+
+
+return nil

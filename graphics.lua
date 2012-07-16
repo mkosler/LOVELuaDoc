@@ -17,6 +17,17 @@
 --
 
 ---
+-- Draws an arc.
+-- @function [parent = #graphics] arc
+-- @param mode How to draw the arc.
+-- @param #number x The position of the center along x-axis.
+-- @param #number y The position of the center along y-axis.
+-- @param #number radius The radius of the arc.
+-- @param #number angle1 The angle at which the arc begins.
+-- @param #number angle2 The angle at which the arc terminates.
+-- @param #number segments (Optional = 10) The number of segments used for drawing the arc.
+
+---
 -- Checks if a display mode is supported.
 -- @function [parent = #graphics] checkMode
 -- @param #number width The display width.
@@ -55,6 +66,8 @@
 -- @param #number sy (Optional = sx) Scale factor (y-axis). Can be negative.
 -- @param #number ox (Optional = 0) Origin offset (x-axis). (A value of 20 would effectively move your drawable object 20 pixels to the left.)
 -- @param #number oy (Optional = 0) Origin offset (y-axis). (A value of 20 would effectively move your drawable object 20 pixels up.)
+-- @param #number kx (Optional = 0) Shearing factor (x-axis).
+-- @param #number ky (Optional = 0) Shearing factor (y-axis).
 
 ---
 -- Draw a Quad with the specified Image on screen.
@@ -68,6 +81,8 @@
 -- @param #number sy (Optional = sx) Scale factor (y-axis).
 -- @param #number ox (Optional = 0) Origin offset (x-axis).
 -- @param #number oy (Optional = 0) Origin offset (y-axis).
+-- @param #number kx (Optional = 0) Shearing factor (x-axis).
+-- @param #number ky (Optional = 0) Shearing factor (y-axis).
 
 ---
 -- Gets the current background color.
@@ -87,6 +102,11 @@
 -- @return #string caption The current window caption.
 
 ---
+-- Gets the current target Canvas.
+-- @function [parent = #graphics] getCanvas
+-- @return canvas The Canvas set by setCanvas. Returns nil if drawing to the real screen.
+
+---
 -- Gets the current color.
 -- @function [parent = #graphics] getColor
 -- @return #number r The red component (0-255).
@@ -100,6 +120,12 @@
 -- @return mode The current color mode.
 
 ---
+-- Returns the default scaling filters.
+-- @function [parent = #graphics] getDefaultImageFilter
+-- @return min Filter mode used when scaling the image down.
+-- @return mag Filter mode used when scaling the image up.
+
+---
 -- Gets the current Font object.
 -- @function [parent = #graphics] getFont
 -- @return font The current Font, or nil of none is set.
@@ -108,12 +134,6 @@
 -- Gets the height of the window.
 -- @function [parent = #graphics] getHeight
 -- @return #number height The height of the window.
-
----
--- Gets the current line stipple.
--- @function [parent = #graphics] getLineStipple
--- @return #number pattern The 16-bit stipple pattern.
--- @return #number repeat The repeat factor.
 
 ---
 -- Gets the line style.
@@ -131,9 +151,23 @@
 -- @return #number size The max supported point size.
 
 ---
+-- Returns the current display mode.
+-- @function [parent = #graphics] getMode
+-- @return #number width The Display width.
+-- @return #number height The Display height.
+-- @return #boolean fullscreen Fullscreen (true) or windowed (false).
+-- @return #boolean vsync True if vertical sync is enabled or false if disabled.
+-- @return #number fsaa The number of FSAA samples.
+
+---
 -- Gets a list of supported fullscreen modes.
 -- @function [parent = #graphics] getModes
 -- @return #table modes A table of width/height pairs. (Note that this may not be in order.)
+
+---
+-- Returns the current PixelEffect. Returns nil if none is set.
+-- @function [parent = #graphics]
+-- @return pe The current PixelEffect.
 
 ---
 -- Gets the point size.
@@ -159,9 +193,21 @@
 -- @return #number width The width of the window.
 
 ---
+-- Checks if the game window has keyboard focus.
+-- @function [parent = #graphics] hasFocus
+-- @return #boolean focus True if the window has the focus or false if not.
+
+---
 -- Checks if the display has been set.
 -- @function [parent = #graphics] isCreated
 -- @return #boolean created True if the window has been created, false otherwise.
+
+---
+-- Checks if certain graphics functions can be used.
+-- @function [parent = #graphics] isSupported
+-- @param supportN A graphics feature to check for.
+-- @param ... Additional graphics feature(s) to check for.
+-- @return isSupported True if everything is supported, false otherwise.
 
 ---
 -- Draws lines between points.
@@ -171,6 +217,22 @@
 -- @param #number x2 The position of second point on the x-axis.
 -- @param #number y2 The position of second point on the y-axis.
 -- @param #number ... You can continue passing point positions to draw a polyline.
+
+-- Draws lines between points.
+-- @function [parent = #graphics] line
+-- @param #table points A table of points, as described above.(x1,y1,x2,y2,...)
+
+---
+-- Creates a new Canvas object for offscreen rendering.
+-- @function [parent = #graphics] newCanvas
+-- @return canvas A new Canvas with width/height equal to the window width/height.
+
+---
+-- Creates a new Canvas.
+-- @function [parent = #graphics] newCanvas
+-- @param #number width The desired width of the Canvas.
+-- @param #number height The desired height of the Canvas.
+-- @return canvas A new Canvas with specified width and height.
 
 ---
 -- Creates a new Font.
@@ -184,18 +246,6 @@
 -- @function [parent = #graphics] newFont
 -- @param #number size (Optional = 12) The size of the font in pixels.
 -- @return font A Font object which can be used to draw text on screen.
-
----
--- Creates a new Framebuffer. (Renamed to newCanvas in 0.8.0)
--- @function [parent = #graphics] newFramebuffer
--- @return framebuffer A new framebuffer with width/height equal to the window width/height.
-
----
--- Creates a new Framebuffer. (Renamed to newCanvas in 0.8.0)
--- @function [parent = #graphics] newFramebuffer
--- @param #number width The desired width of the framebuffer.
--- @param #number height The desired height of the framebuffer.
--- @return framebuffer A new framebuffer with specified width and height.
 
 ---
 -- Creates a new Image from a file path.
@@ -237,6 +287,12 @@
 -- @return system A new ParticleSystem.
 
 ---
+-- Creates a new PixelEffect object for hardware-accelerated pixel level effects.
+-- @function [parent = #graphics] newPixelEffect
+-- @param code The pixel effect code.
+-- @return pixeleffect A PixelEffect object for use in drawing operations.
+
+---
 -- Creates a new Quad.
 -- @function [parent = #graphics] newQuad
 -- @param #number x The top-left position along the x-axis.
@@ -258,6 +314,12 @@
 -- @param image The Image to use for the sprites.
 -- @param #number size (Optional = 1000) The max number of sprites.
 -- @return spriteBatch The new SpriteBatch.
+
+---
+-- Creates a new stencil.
+-- @function [parent = #graphics] newStencil
+-- @param stencilFunction Function that draws the stencil.
+-- @return myStencil Function that defines the new stencil.
 
 ---
 -- Draws a point.
@@ -324,6 +386,8 @@
 -- @param #number r (Optional = 0) Orientation (radians).
 -- @param #number sx (Optional = 1) Scale factor (x-axis).
 -- @param #number sy (Optional = sx) Scale factor (y-axis).
+-- @param #number kx (Optional = 0) Shearing factor (x-axis).
+-- @param #number ky (Optional = 0) Shearing factor (y-axis).
 
 ---
 -- Draws formatted text, with word wrap and alignment.
@@ -413,7 +477,7 @@
 -- @param #number b The blue component (0-255).
 
 ---
--- Sets the background color. (Available since 0.8.0)
+-- Sets the background color.
 -- @function [parent = #graphics] setBackgroundColor
 -- @param #number r The red component (0-255).
 -- @param #number g The green component (0-255).
@@ -425,11 +489,21 @@
 -- @function [parent = #graphics] setBackgroundColor
 -- @param #table rgb A numerical indexed table with the red, green and blue values as numbers.
 
-
 ---
 -- Sets the blending mode.
 -- @function [parent = #graphics] setBlendMode
 -- @param mode The blend mode to use.
+
+---
+-- Captures drawing operations to a Canvas.
+-- All drawing operations until the next love.graphics.setCanvas call will be redirected to the Canvas and not shown on the screen.
+-- @function [parent = #graphics] setCanvas
+-- @param canvas The new target.
+
+---
+-- Captures drawing operations to a Canvas.
+-- Resets the render target to the screen, i.e. re-enables drawing to the screen.
+-- @function [parent = #graphics] setCanvas
 
 ---
 -- Sets the window caption.
@@ -455,8 +529,13 @@
 -- @param mode The color mode to use.
 
 ---
--- Set an already-loaded Font as the current font or create and load a new one from the file
--- and size.
+-- Sets the default scaling filters.
+-- @function [parent = #graphics] setDefaultImageFilter
+-- @param min Filter mode used when scaling the image down.
+-- @param mag Filter mode used when scaling the image up.
+
+---
+-- Set an already-loaded Font as the current font.
 --
 -- It's recommended that Font objects are created with love.graphics.newFont in the loading
 -- stage and then passed to this function in the drawing stage.
@@ -469,16 +548,23 @@
 -- @param drawable A drawable object. The icon should be 32x32px png image.
 
 ---
+-- Defines an inverted stencil for the drawing operations.
+--
+-- It's the same as love.graphics.setStencil with the mask inverted.
+-- @function [parent = #graphics] setInvertedStencil
+-- @param stencilFunction Function that draws the stencil.
+
+---
+-- Releases the active inverted stencil for the drawing operations.
+--
+-- It's the same as love.graphics.setStencil with the mask inverted.
+-- @function [parent = #graphics] setInvertedStencil
+
+---
 -- Sets the line width and style.
 -- @function [parent = #graphics] setLine
 -- @param #number width The width of the line.
 -- @param style (Optional = "smooth") The LineStyle to use.
-
----
--- Sets the line stipple pattern.
--- @function [parent = #graphics] setLineStipple
--- @param #number pattern The 16-bit stipple pattern.
--- @param #number repeat (Optional = 1) The repeat factor.
 
 ---
 -- Sets the line style.
@@ -501,6 +587,36 @@
 -- @return #boolean success True if successful, false otherwise.
 
 ---
+-- Creates and sets a new font.
+-- @function [parent = #graphics] setNewFont
+-- @param #string filename The path and name of the file with the font.
+-- @param #number size (Optional = 12) The size of the font.
+-- @return font The new font.
+
+---
+-- Creates and sets a new font.
+-- @function [parent = #graphics] setNewFont
+-- @param file The File with the font.
+-- @param #number size (Optional = 12) The size of the font.
+-- @return font The new font.
+
+---
+-- Creates and sets a new font.
+-- @function [parent = #graphics] setNewFont
+-- @param file A rasterizer.
+-- @return font The new font.
+
+---
+-- Sets or resets a PixelEffect as the current pixel effect.
+-- All drawing operations until the next love.graphics.setPixelEffect will be drawn using the PixelEffect object specified.
+-- @function [parent = #graphics] setPixelEffect
+-- @param pixeleffect The new pixel effect.
+
+---
+-- Disables pixel effects, allowing unfiltered drawing operations.
+-- @function [parent = #graphics] setPixelEffect
+
+---
 -- Sets the point size and style.
 -- @function [parent = #graphics] setPoint
 -- @param #number size The new point size.
@@ -517,18 +633,43 @@
 -- @param style The new point style.
 
 ---
--- Sets or resets a Framebuffer as render target. All drawing operations until the next
--- love.graphics.setRenderTarget will be directed to the Framebuffer object specified.
--- Renamed to setCanvas in 0.8.0
--- @function [parent = #graphics] setRenderTarget
--- @param framebuffer The new render target.
-
----
--- Sets or disables scissor.
+-- Sets scissor.
 --
 -- The scissor limits the drawing area to a specified rectangle. This affects all graphics
 -- calls, including love.graphics.clear.
 -- @function [parent = #graphics] setScissor
+-- @param #number x X coordinate of upper left corner.
+-- @param #number y Y coordinate of upper left corner.
+-- @param #number width Width of clipping rectangle.
+-- @param #number height Height of clipping rectangle.
+
+---
+-- Disables scissor.
+--
+-- The scissor limits the drawing area to a specified rectangle. This affects all graphics
+-- calls, including love.graphics.clear.
+-- @function [parent = #graphics] setScissor
+
+---
+-- Defines a stencil for the drawing operations.
+--
+-- The passed function draws to the stencil instead of the screen, creating an image with transparent and opaque pixel.
+-- While active, it is used to test where pixel will be drawn or discarded.
+-- @function [parent = #graphics] setStencil
+-- @param stencilFunction Function that draws the stencil.
+
+---
+-- Releases the active stencil for the drawing operations.
+--
+-- The passed function draws to the stencil instead of the screen, creating an image with transparent and opaque pixel.
+-- While active, it is used to test where pixel will be drawn or discarded.
+-- @function [parent = #graphics] setStencil
+
+---
+-- Shears the coordinate system.
+-- @function [parent = #graphics] shear
+-- @param #number kx The shear factor on the x-axis.
+-- @param #number ky The shear factor on the y-axis.
 
 ---
 -- Toggles fullscreen.
