@@ -85,7 +85,9 @@
 -- Checks if a button on a joystick is pressed.
 -- @function [parent = #joystick] isDown
 -- @param #number joystick The joystick to be checked
--- @param #number buttonN A button to check
+-- @param #number button1 A button to check
+-- @param #number button2 A button to check
+-- @param #number ... Additional button(s) to check
 -- @return #boolean anyDown True if any supplied button is down, false if not.
 
 ---
@@ -97,10 +99,6 @@
 ---
 -- Opens up a joystick to be used, i.e. makes it ready to use. By default joysticks that are
 -- available at the start of your game will be opened.
---
--- NOTE: Unlike conventional Lua indexes, joysticks begin counting from 0. To to open the first
--- joystick, you would use love.joystick.open(0). This is being changed to begin from one in
--- the upcoming LOVE 0.8.0.
 -- @function [parent = #joystick] open
 -- @param #number joystick The joystick to be opened
 

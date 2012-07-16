@@ -29,7 +29,9 @@
 ---
 -- Checks whether a certain mouse button is down.
 -- @function [parent = #mouse] isDown
--- @param buttonN A button to check.
+-- @param button1 A button to check.
+-- @param button2 A button to check.
+-- @param ... Additional button(s) to check.
 -- @param #boolean anyDown True if any specified button is down, false otherwise.
 
 ---
