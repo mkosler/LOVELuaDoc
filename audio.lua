@@ -5,6 +5,11 @@
 --
 
 ---
+-- Returns the distance attenuation model.
+-- @function [parent = #audio] getDistanceModel
+-- @return model The current distance model.
+
+---
 -- Gets the current number of simulatenous playing sources.
 -- @function [parent = #audio] getNumSources
 -- @return #number numSources The current number of simulatenous playing sources.
@@ -91,13 +96,18 @@
 -- @param source The source to rewind.
 
 ---
+-- Sets the distance attenuation model.
+-- @function [parent = #audio] setDistanceModel
+-- @param model The new distance model.
+
+---
 -- Sets the orientation of the listener.
 -- @function [parent = #audio] setOrientation
 -- @param #number fx, fy, fz Forward vector of the listener orientation.
 -- @param #number ux, uy, ux Up vector of the listener orientation.
 
 ---
--- Sets the position of the listener.
+-- Sets the position of the listener, which determines how sounds play.
 -- @function [parent = #audio] setPosition
 -- @param #number x The X position of the listener.
 -- @param #number y The Y position of the listener.

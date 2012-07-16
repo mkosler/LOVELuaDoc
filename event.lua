@@ -9,25 +9,26 @@
 -- @function [parent = #event] clear
 
 ---
--- Gets an iterator for messages in the event queue.
+-- Returns an iterator for messages in the event queue.
 -- @function [parent = #event] poll
--- @return #function Iterator function usable in for loop.
+-- @return #function Iterator function usable in a for loop.
 
 ---
--- Pump events into the event queue.
+-- Pumps events into the event queue.
 -- @function [parent = #event] pump
--- @param e The type of event.
--- @param a (Optional = nil) First event argument.
--- @param b (Optional = nil) Second event argument.
--- @param c (Optional = nil) Third event argument.
 
 ---
 -- Adds an event to the event queue.
 -- @function [parent = #event] push
--- @param e The type of event.
+-- @param e The name of the event.
 -- @param a (Optional = nil) First event argument.
 -- @param b (Optional = nil) Second event argument.
 -- @param c (Optional = nil) Third event argument.
+-- @param d (Optional = nil) Fourth event argument.
+
+---
+-- Adds the quit event to the queue.
+-- @function [parent = #event] quit
 
 ---
 -- Like love.event.poll(), but blocks until there is an event in the queue.

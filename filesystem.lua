@@ -96,7 +96,7 @@
 -- @return #boolean ok True if the directory was created, false if not.
 
 ---
--- Creates a new File object.
+-- Creates a new File object. It needs to be opened before it can be accessed.
 -- @function [parent = #filesystem] newFile
 -- @param #string filename The filename of the file to read.
 -- @return file The new File object.
@@ -125,6 +125,7 @@
 
 ---
 -- Sets the write directory for your game.
+-- Note that you can only set the name of the folder to store yourfiles in, not the location.
 -- @function [parent = #filesystem] setIdentity
 -- @param #string name The new identity that will be used as write directory
 
